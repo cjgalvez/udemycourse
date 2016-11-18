@@ -5,14 +5,15 @@ const INITIAL_STATE = {
 };
 
 export default function(state = INITIAL_STATE, action) {
+  console.log("Action:", action);
   switch(action.type) {
     case FETCH_POST:
       return {
-        ...state, post: action.payload.data
+        ...state, post: action.payload
       }
     case FETCH_POSTS:
       return {
-        ...state, all: action.payload.data
+        ...state, all: action.payload
       }
     default:
       return state;

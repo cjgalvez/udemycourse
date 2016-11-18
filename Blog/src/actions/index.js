@@ -1,3 +1,4 @@
+import firebase from 'firebase';
 import axios from 'axios';
 
 export const FETCH_POSTS = 'FETCH_POSTS';
@@ -5,42 +6,48 @@ export const CREATE_POST = 'CREATE_POST';
 export const FETCH_POST = 'FETCH_POST';
 export const DELETE_POST = 'DELETE_POST';
 
-const ROOT_URL = 'http://reduxblog.herokuapp.com/api';
-const API_KEY = '?key=cjgalveztest';
+//const ROOT_URL = 'http://reduxblog.herokuapp.com/api';
+//const API_KEY = '?key=cjgalveztest';
+
+var config = {
+  apiKey: "AIzaSyALWWJP92UCgo-e94JhV3kndANNcmTq9Hc",
+  authDomain: "blogentries-bb82f.firebaseapp.com",
+  databaseURL: "https://blogentries-bb82f.firebaseio.com",
+  storageBucket: "blogentries-bb82f.appspot.com",
+  messagingSenderId: "988653231121"
+};
+firebase.initializeApp(config);
+
+var rootRef = firebase.database().ref();
 
 export function fetchPosts() {
-  const request = axios.get(ROOT_URL + '/posts' + API_KEY);
-
-  return {
-    type: FETCH_POSTS,
-    payload: request
+  return (dispatch) => {
+    rootRef.on('value', snapshot => {
+      dispatch({
+        type: FETCH_POSTS,
+        payload: snapshot.val()
+      });
+    });
   };
 }
 
 
 export function createPost(props) {
-  const request = axios.post(ROOT_URL + '/posts' + API_KEY, props);
-
-  return {
-    type: CREATE_POST,
-    payload: request
-  };
+  return dispatch => rootRef.push(props);
 } 
 
 export function fetchPost(id) {
-  const request = axios.get(ROOT_URL + '/posts/' + id + API_KEY);
-
-  return {
-    type: FETCH_POST,
-    payload: request
-  };
+  var singleRef = firebase.database().ref(id)
+  return (dispatch) => {
+    singleRef.on('value', snapshot => {
+      dispatch({
+        type: FETCH_POST,
+        payload: snapshot.val()
+      })
+    })
+  }
 }
 
 export function deletePost(id) {
-  const request = axios.delete(ROOT_URL + '/posts/' + id + API_KEY);
-
-  return {
-    type: DELETE_POST,
-    payload: request
-  };
+  return dispatch => rootRef.child(id).remove();
 }

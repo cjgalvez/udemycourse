@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { fetchPosts } from '../actions/index';
 import { Link } from 'react-router';
+import _ from 'lodash';
 
 class PostsIndex extends Component {
   componentWillMount() {
@@ -10,16 +11,17 @@ class PostsIndex extends Component {
   }
 
   renderPosts() {
-    return this.props.posts.map((post) => {
+    return _.map(this.props.posts, ((post, key) => {
+      console.log("Post:", key);
       return(
-        <li className="list-group-item" key={post.id}>
-          <Link to={"posts/" + post.id}>
+        <li className="list-group-item" key={key}>
+          <Link to={"posts/" + key}>
             <span className="pull-xs-right">{post.categories}</span>
             <strong>{post.title}</strong>
           </Link>
         </li>
       );
-    });
+    }));
   }
 
   render() {
@@ -44,6 +46,7 @@ class PostsIndex extends Component {
 //}
 
 function mapStateToProps(state) {
+  console.log("State:", state);
   return { posts: state.posts.all }
 }
 
